@@ -1,0 +1,21 @@
+# Ignora el archivo especificado
+#app/Config/Database.php
+
+# CodeIgniter 4 - Ignorar archivos y directorios comunes
+
+# Directorios y archivos generados por Composer
+/vendor/
+composer.phar
+composer.lock
+# Directorios y archivos generados por npm
+/node_modules/
+/package-lock.json
+/yarn.lock
+# Directorio para almacenar dependencias de npm
+/assets/node_modules/
+# Directorios y archivos generados por PHPStorm (puedes personalizar esto)
+.idea/
+.idea_modules/
+# Archivos de caché y registros de CodeIgniter
+writable/cache/
+writable/logs/
