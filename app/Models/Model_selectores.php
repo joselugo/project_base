@@ -11,7 +11,7 @@ class Model_selectores extends Model
      *
      * @var object
      */
-    var $database;
+    private $database;
 
     /**
      * Constructor de la clase Model_selectores.

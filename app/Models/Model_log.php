@@ -11,7 +11,7 @@ class Model_log extends Model
      *
      * @var object
      */
-    var $database;
+    private $database;
 
     /**
      * Constructor de la clase Model_log.
@@ -98,7 +98,9 @@ class Model_log extends Model
     public  function insert_log_login($id, $user, $ip, $error)
     {
         date_default_timezone_set('America/Mexico_City');
-        $data = ['idadmin' => $id, 'fecha' => date("Y-m-d H:i:s"), 'ipadmin' => $ip, 'error' => $error];
+        // Ensure idadmin is never null - use 0 as default for failed logins
+        $adminId = $id !== null ? $id : 0;
+        $data = ['idadmin' => $adminId, 'fecha' => date("Y-m-d H:i:s"), 'ipadmin' => $ip, 'error' => $error];
         $builder = $this->database->table('loglogin');
         $query = $builder->insert($data);
 

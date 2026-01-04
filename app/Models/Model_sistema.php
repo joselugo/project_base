@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class Model_sistema extends Model
 {
-	var $database;
+	private $database;
 	function __construct()
 	{
 		$database = \Config\Database::connect('default');

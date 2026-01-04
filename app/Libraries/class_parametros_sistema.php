@@ -1,4 +1,8 @@
-<?php if (!defined('BASEPATH')) exit('No permitir el acceso directo al script');
+<?php 
+
+namespace App\Libraries;
+
+use App\Models\Model_configuracion;
 
 class Class_parametros_sistema{
 	
@@ -6,9 +10,8 @@ class Class_parametros_sistema{
 	public $mod_parametros_sistema;
 
 	function __construct()
-	{   $CI =& get_instance();
-		$CI->load->model('Model_parametros_sistema');
-		$this->mod_parametros_sistema = new Model_parametros_sistema();
+	{   
+		$this->mod_parametros_sistema = new Model_configuracion();
    		$this->string_permisos = "";
 	}
 

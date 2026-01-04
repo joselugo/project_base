@@ -26,7 +26,38 @@ class BaseController extends Controller
 	 *
 	 * @var array
 	 */
-	protected $helpers = [];
+	protected $helpers = ['url'];
+
+	/**
+	 * Check if user is logged in
+	 * 
+	 * @return bool
+	 */
+	protected function isLoggedIn(): bool
+	{
+		return session()->has('iduser19') && !empty(session('iduser19'));
+	}
+
+	/**
+	 * Check if session has specific variable and it's not empty
+	 * 
+	 * @param string $key
+	 * @return bool
+	 */
+	protected function hasSessionVar(string $key): bool
+	{
+		return session()->has($key) && !empty(session($key));
+	}
+
+	/**
+	 * Check if user is logged in and has valid token
+	 * 
+	 * @return bool
+	 */
+	protected function isLoggedInWithToken(): bool
+	{
+		return $this->isLoggedIn() && $this->hasSessionVar('token19');
+	}
 
 	/**
 	 * Constructor.
@@ -44,3 +75,4 @@ class BaseController extends Controller
 	}
 
 }
+

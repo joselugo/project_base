@@ -19,8 +19,8 @@
         <tr role="row">
           <th class="all sorting_asc" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="0" style="width: 20px;" aria-label="ID: Activar para ordenar la columna de manera descendente" aria-sort="ascending">ID</th>
           <th class="sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="1" style="width: 0px; display: none;" aria-label="Nombre: Activar para ordenar la columna de manera ascendente">Nombre</th>
-          <th class="all sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="2" style="width: 160px;" aria-label="Usuario: Activar para ordenar la columna de manera ascendente">Url</th>
-          <th class="all sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="2" style="width: 160px;" aria-label="Usuario: Activar para ordenar la columna de manera ascendente">Usuario</th>
+          <th class="all sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="2" style="width: 160px;" aria-label="Url: Activar para ordenar la columna de manera ascendente">Url</th>
+          <th class="all sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="3" style="width: 200px;" aria-label="Tipo: Activar para ordenar la columna de manera ascendente">Tipo de Permiso</th>
           <th class="all text-center sorting_disabled" data-orderable="false" rowspan="1" colspan="1" data-column-index="6" style="width: 36px;" aria-label=""></th>
         </tr>
       </thead>

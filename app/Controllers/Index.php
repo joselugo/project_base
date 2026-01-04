@@ -27,19 +27,23 @@ class Index extends BaseController
     date_default_timezone_set('America/Mexico_City');
     $this->converter = new converter();
     $this->model_configuracion = new Model_configuracion();
-    session_start();
   }
 
 
   public function index()
   {
-    if (isset($_SESSION['iduser19'])) {
+    if ($this->isLoggedIn()) {
       $ids = array(44, 64);
       $config = $this->model_configuracion->get_configuracion_name($ids);
       if ($config) {
-        $data['menu'] = $this->seguridad->print_menu($_SESSION['iduser19']);
+        $data['menu'] = $this->seguridad->print_menu(session('iduser19'));
         $data['google_api'] = $config["keyapigoogle"];
         $data['img_slider'] = $config["imgloginadmin"];
+        // Pasar datos de sesión a las vistas
+        $data['usuario_avatar'] = session('avatar');
+        $data['usuario_nombre'] = session('nombre');
+        $data['usuario_rol'] = session('rol');
+        $data['id_usuario8291'] = session('id_usuario8291');
         echo view('inicio', $data);
       } else {
         echo "Error la api Google no existe.";
@@ -52,9 +56,9 @@ class Index extends BaseController
 
   public function home()
   {
-    if (isset($_SESSION['iduser19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('HOME'));
-      $check = $this->model_sistema->get_check($_SESSION['iduser19']);
+    if ($this->isLoggedIn()) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('HOME'));
+      $check = $this->model_sistema->get_check(session('iduser19'));
       $permisos = [
         "WIDGET CLIENTES_ONLINE" => false,
         "WIDGET TRANSACCIONES" => false,
@@ -70,7 +74,7 @@ class Index extends BaseController
       ];
       $permiso_dashboard = false;
       foreach ($permisos as $key => $value) {
-        $permiso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access("$key"));
+        $permiso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access("$key"));
 
         if ($permiso != 0) {
           $permiso_dashboard = true;
@@ -81,7 +85,7 @@ class Index extends BaseController
       if ($permiso_dashboard and !$check) {
         $hoy = date('d-m-Y');
         $emisores_body = "";
-        $usuario = $this->model_dashboard->get_nombre_user($_SESSION['iduser19']);
+        $usuario = $this->model_dashboard->get_nombre_user(session('iduser19'));
         $emisores = $this->model_dashboard->get_emisores();
         $data_grafico = array();
         $fechas = array();
@@ -124,7 +128,7 @@ class Index extends BaseController
           "check_cumple_dia" => 1
         ];
         $cumpleanios = $this->model_sistema->get_cumpleanios(date('m'), date('d'));
-        $result_update = $this->model_sistema->update_check_cumpleanios($_SESSION['iduser19'], $data);
+        $result_update = $this->model_sistema->update_check_cumpleanios(session('iduser19'), $data);
         if ($cumpleanios) {
           $nombres = "";
           foreach ($cumpleanios as $key => $personal) {
@@ -155,8 +159,8 @@ class Index extends BaseController
   public function get_log_json()
   {
 
-    if (isset($_SESSION['iduser19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('HOME'));
+    if (session('iduser19')) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('HOME'));
       if ($tipoacceso > 0) {
         $log = $this->model_log->get_all_log();
 
@@ -178,3 +182,4 @@ class Index extends BaseController
     } else $this->seguridad->login_back();
   }
 }
+

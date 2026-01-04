@@ -68,6 +68,16 @@ class Cache extends BaseConfig
 	public $prefix = '';
 
 	/*
+	|--------------------------------------------------------------------------
+	| Reserved Characters
+	|--------------------------------------------------------------------------
+	|
+	| A string of reserved characters that cannot be used in cache keys.
+	|
+	*/
+	public $reservedCharacters = '{}()/\@:';
+
+	/*
 	| -------------------------------------------------------------------------
 	| Memcached settings
 	| -------------------------------------------------------------------------
@@ -98,6 +108,16 @@ class Cache extends BaseConfig
 		'port'     => 6379,
 		'timeout'  => 0,
 		'database' => 0,
+	];
+
+	/*
+	|--------------------------------------------------------------------------
+	| File Handler Settings
+	|--------------------------------------------------------------------------
+	*/
+	public $file = [
+		'storePath' => WRITEPATH . 'cache/',
+		'mode'      => 0640,
 	];
 
 	/*

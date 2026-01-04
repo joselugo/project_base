@@ -15,6 +15,8 @@ class Autoload extends \CodeIgniter\Config\AutoloadConfig
 
 	public $classmap = [];
 
+	public $helpers = ['url'];
+
 	//--------------------------------------------------------------------
 
 	/**

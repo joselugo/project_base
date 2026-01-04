@@ -2,11 +2,10 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\Controller;
 use App\Models\Model_rutas;
 use App\Libraries\Class_seguridad;
 
-class Rutas extends Controller
+class Rutas extends BaseController
 {
   var $seguridad;
   var $model_rutas;
@@ -15,13 +14,12 @@ class Rutas extends Controller
   {
     $this->seguridad = new Class_seguridad();
     $this->model_rutas = new Model_rutas();
-    session_start();
   }
 
   public function index()
   {
-    if (isset($_SESSION['iduser19'])) {
-      if ($this->seguridad->access('PERMISOS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->isLoggedIn()) {
+      if ($this->seguridad->access('PERMISOS', 'LECTURA', session('iduser19'))) {
         return view('rutas/index');
       } else echo view('errors/html/sin_acceso');
     } else
@@ -30,27 +28,38 @@ class Rutas extends Controller
 
   public function get_rutas()
   {
-    if ($this->seguridad->access('PERMISOS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PERMISOS', 'LECTURA', session('iduser19'))) {
       $all_items = $this->model_rutas->traer_rutas();
       $array_cliente = array();
       if ($all_items) {
         $tipo = 0;
         foreach ($all_items as $items) {
-          if ($items->activo == 2) {
-            $especial = "<u>Especial </u>";
+          // Determinar el tipo y formato visual del permiso
+          if ($items->padre == 0) {
+            // Es un permiso padre
+            if ($items->activo == 2) {
+              $tipo = '<span class="badge badge-warning"><i class="fas fa-crown"></i> Padre Especial</span>';
+            } else {
+              $tipo = '<span class="badge badge-primary"><i class="fas fa-folder"></i> Padre</span>';
+            }
           } else {
-            $especial = "";
-          }
-          if ($items->padre != 0) {
-            $padre = "";
+            // Es un permiso hijo
+            $padre_nombre = "";
             foreach ($all_items as $item) {
               if ($items->padre == $item->id_permiso) {
-                $padre = $item->modulo . " <sup>id:$item->id_permiso</sup>";
+                $padre_nombre = $item->modulo;
+                break;
               }
             }
-            $tipo = $especial . "Hijo de: <b>$padre</b>";
+            
+            if ($items->activo == 2) {
+              $tipo = '<span class="badge badge-danger"><i class="fas fa-star"></i> Hijo Especial</span><br>
+                       <small class="text-muted"><i class="fas fa-arrow-up"></i> de: <strong>' . $padre_nombre . '</strong></small>';
+            } else {
+              $tipo = '<span class="badge badge-success"><i class="fas fa-file"></i> Hijo</span><br>
+                       <small class="text-muted"><i class="fas fa-arrow-up"></i> de: <strong>' . $padre_nombre . '</strong></small>';
+            }
           }
-          $items->padre == 0 ? $tipo = "Padre" : null;
           $array_item = array(
             "id" => $items->id_permiso,
             "modulo" => $items->modulo,
@@ -67,7 +76,7 @@ class Rutas extends Controller
 
   public function new_ruta()
   {
-    if ($this->seguridad->access('PERMISOS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PERMISOS', 'LECTURA', session('iduser19'))) {
       $data['data'] = $this->model_rutas->traer_hijos();
       return view('rutas/new', $data);
     }
@@ -75,7 +84,7 @@ class Rutas extends Controller
 
   public function create_ruta()
   {
-    if ($this->seguridad->access('PERMISOS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PERMISOS', 'LECTURA', session('iduser19'))) {
       $especial = $this->request->getPost('especial');
       $imagen = $this->request->getPost('imagen');
       $nombre = $this->request->getPost('nombre');
@@ -103,7 +112,7 @@ class Rutas extends Controller
 
   public function delete_ruta()
   {
-    if ($this->seguridad->access('PERMISOS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PERMISOS', 'LECTURA', session('iduser19'))) {
       $id = $this->request->getPost('id');
       $delete = $this->model_rutas->delete_ruta($id);
       if ($delete) {
@@ -114,3 +123,5 @@ class Rutas extends Controller
     }
   }
 }
+
+

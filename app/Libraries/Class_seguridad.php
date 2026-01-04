@@ -8,8 +8,8 @@ use App\Models\Model_configuracion;
 class Class_seguridad
 {
     //var instancias
-    var $mdl_security;
-    var $mdl_conf;
+    private $mdl_security;
+    private $mdl_conf;
 
     function __construct()
     {
@@ -362,8 +362,9 @@ class Class_seguridad
     public function access($NombreDeAcceso = "", $tipoDeAcceso = "escritura", $session = null)
     {
         $tipoDeAcceso = strtolower($tipoDeAcceso);
-        if (isset($_SESSION['iduser19'])) {
-            $tipoacceso = $this->check_permission($_SESSION['iduser19'], $this->key_access($NombreDeAcceso));
+        $session = \Config\Services::session();
+        if ($session->get('iduser19')) {
+            $tipoacceso = $this->check_permission($session->get('iduser19'), $this->key_access($NombreDeAcceso));
             if ($tipoacceso == 1 and $tipoDeAcceso == "lectura") {
                 return $tipoacceso;
             } elseif ($tipoacceso >= 2 and ($tipoDeAcceso == "escritura" or $tipoDeAcceso == "lectura")) {
@@ -383,8 +384,9 @@ class Class_seguridad
     public function access_full($NombreDeAcceso = "", $tipoDeAcceso = "escritura", $session = null)
     {
         $tipoDeAcceso = strtolower($tipoDeAcceso);
-        if (isset($_SESSION['iduser19'])) {
-            $tipoacceso = $this->check_permission($_SESSION['iduser19'], $this->key_access($NombreDeAcceso));
+        $session = \Config\Services::session();
+        if ($session->get('iduser19')) {
+            $tipoacceso = $this->check_permission($session->get('iduser19'), $this->key_access($NombreDeAcceso));
             if ($tipoacceso == 1 and $tipoDeAcceso == "lectura") {
                 return $tipoacceso;
             } elseif ($tipoacceso >= 2 and ($tipoDeAcceso == "escritura" or $tipoDeAcceso == "lectura")) {
@@ -406,8 +408,9 @@ class Class_seguridad
     public function access_void($NombreDeAcceso = "", $tipoDeAcceso = "escritura", $session = null)
     {
         $tipoDeAcceso = strtolower($tipoDeAcceso);
-        if (isset($_SESSION['iduser19'])) {
-            $tipoacceso = $this->check_permission($_SESSION['iduser19'], $this->key_access($NombreDeAcceso));
+        $session = \Config\Services::session();
+        if ($session->get('iduser19')) {
+            $tipoacceso = $this->check_permission($session->get('iduser19'), $this->key_access($NombreDeAcceso));
             if ($tipoacceso == 1 and $tipoDeAcceso == "lectura") {
                 return $tipoacceso;
             } elseif ($tipoacceso >= 2 and ($tipoDeAcceso == "escritura" or $tipoDeAcceso == "lectura")) {
@@ -440,6 +443,9 @@ class Class_seguridad
 
         // Se asigna la imagen recuperada al arreglo 'img'.
         $data['img'] = $img_db[0];
+
+        // Cargar el helper URL para la función base_url()
+        helper('url');
 
         // Se carga la vista 'login/login' y se pasa el arreglo 'data' a la vista.
         echo view('login/login', $data);

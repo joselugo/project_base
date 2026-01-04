@@ -1,24 +1,42 @@
-<h1 class="page-header">Sistema</h1>
+<link href="<?= base_url() ?>/public/css/dynamic-forms.css" rel="stylesheet">
+<link href="<?= base_url() ?>/public/css/sistema-global.css" rel="stylesheet">
 
-<ul class="nav nav-tabs">
-    <li class="nav-items"><a href="#default-tab-1" data-toggle="tab" class="nav-link active"><i class="fas fa-desktop"></i> Backup Sistema</a></li>
-    <li class="nav-items"><a href="#default-tab-2" data-toggle="tab" class="nav-link"><i class="fas fa-recycle"></i> Mantenimiento</a></li>
+<h1 class="page-header"><i class="fas fa-server"></i> Sistema</h1>
+
+<ul class="nav nav-tabs settings-tabs">
+    <li class="nav-items">
+        <a href="#default-tab-1" data-toggle="tab" class="nav-link active">
+            <i class="fas fa-database"></i> Backup Sistema
+        </a>
+    </li>
+    <li class="nav-items">
+        <a href="#default-tab-2" data-toggle="tab" class="nav-link">
+            <i class="fas fa-tools"></i> Mantenimiento
+        </a>
+    </li>
 </ul>
-
 
 <div class="tab-content">
     <div class="tab-pane fade active show" id="default-tab-1">
-
-        <table id="data-backup" data-order="[[ 1, &quot;desc&quot; ]]" class="display nowrap table table-striped table-bordered" cellspacing="0" width="100%">
-            <thead>
-                <tr>
-                    <th>Archivo</th>
-                    <th>Fecha</th>
-                    <th>Tamaño</th>
-                    <th></th>
-                </tr>
-            </thead>
-        </table>
+        <div class="panel panel-enhanced mt-4">
+            <div class="panel-heading">
+                <h4 class="panel-title"><i class="fas fa-archive"></i> Archivos de Backup</h4>
+            </div>
+            <div class="panel-body">
+                <div class="table-container">
+                    <table id="data-backup" data-order="[[ 1, &quot;desc&quot; ]]" class="display nowrap table table-striped table-bordered" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="text-center"><i class="fas fa-file"></i> Archivo</th>
+                                <th class="text-center"><i class="fas fa-calendar"></i> Fecha</th>
+                                <th class="text-center"><i class="fas fa-hdd"></i> Tamaño</th>
+                                <th class="text-center"><i class="fas fa-cogs"></i> Acciones</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="tab-pane fade" id="default-tab-2">

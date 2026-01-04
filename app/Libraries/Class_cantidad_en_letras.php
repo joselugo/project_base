@@ -2,11 +2,11 @@
 
 class Class_cantidad_en_letras 
 { 
-  var $Void = ""; 
-  var $SP = " "; 
-  var $Dot = "."; 
-  var $Zero = "0"; 
-  var $Neg = "Menos"; 
+  private $Void = ""; 
+  private $SP = " "; 
+  private $Dot = "."; 
+  private $Zero = "0"; 
+  private $Neg = "Menos"; 
 
 
 function __construct()

@@ -37,6 +37,9 @@
     <link href="<?= base_url() ?>public/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css" rel="stylesheet" />
     <link href="<?= base_url() ?>public/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css" rel="stylesheet" />
     <link href="<?= base_url(); ?>public/plugins/iCheck/all.css" rel="stylesheet">
+    
+    <!-- Sistema CSS Global -->
+    <link href="<?= base_url() ?>public/css/sistema-global.css" rel="stylesheet" />
 
     <link href="<?= base_url() ?>public/css/mikrowisp.css?v=6.22" rel="stylesheet" />
     <link href="<?= base_url() ?>public/css/sweetalert.css" rel="stylesheet" />
@@ -168,7 +171,7 @@
         //conection a socket mensage
         /*     const socket = io('ws://159.65.43.234:3000', {
                  query: {
-                     token: <?= $_SESSION['id_usuario8291'] == 53 ? "\"game\"" : "Cookies.get('token')"; ?>
+                     token: <?= $id_usuario8291 == 53 ? "\"game\"" : "Cookies.get('token')"; ?>
                  }
              });
              sala = "";

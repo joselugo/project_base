@@ -18,14 +18,13 @@ class System extends BaseController
         $this->model_bdatabase = new Model_bdatabase();
         $this->seguridad = new Class_seguridad();
         $this->model_log = new Model_log();
-        session_start();
     }
 
     public function index()
     {
 
-        if (isset($_SESSION['iduser19'])) {
-            $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('SYSTEM'));
+        if ($this->isLoggedIn()) {
+            $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('SYSTEM'));
             if ($tipoacceso >= 2) {
                 $data['tipoacceso'] = $tipoacceso;
                 $data['logconexion'] = $this->model_bdatabase->get_log_conexion();
@@ -46,8 +45,8 @@ class System extends BaseController
 
     public function list_files()
     {
-        if (isset($_SESSION['iduser19']) && isset($_SESSION['token19'])) {
-            $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('SYSTEM'));
+        if ($this->isLoggedIn() && $this->hasSessionVar('token19')) {
+            $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('SYSTEM'));
             if ($tipoacceso >= 2) {
 
                 $array_server = array();
@@ -115,8 +114,8 @@ class System extends BaseController
 
     public function purge()
     {
-        if (isset($_SESSION['iduser19']) && isset($_SESSION['token19'])) {
-            $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('SYSTEM'));
+        if ($this->isLoggedIn() && $this->hasSessionVar('token19')) {
+            $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('SYSTEM'));
             if ($tipoacceso >= 2) {
 
                 $tipo = $this->request->getPost('tipo');
@@ -129,7 +128,7 @@ class System extends BaseController
                     $delete = $this->model_bdatabase->purgeconexion($fecha);
                     if ($delete) {
                         $txt_log = "Log de conexion de cliente online/offline - Datos eliminado antes de " . $fecha;
-                        $insert_log = $this->model_log->insert_log("000000", "Sistema", $txt_log, $_SESSION['iduser19']);
+                        $insert_log = $this->model_log->insert_log("000000", "Sistema", $txt_log, session('iduser19'));
                         echo 1;
                     } else {
                         echo 2;
@@ -138,7 +137,7 @@ class System extends BaseController
                     $delete = $this->model_bdatabase->purgeemails($fecha);
                     if ($delete) {
                         $txt_log = "Emails guardados - Datos eliminado antes de " . $fecha;
-                        $insert_log = $this->model_log->insert_log("000000", "Sistema", $txt_log, $_SESSION['iduser19']);
+                        $insert_log = $this->model_log->insert_log("000000", "Sistema", $txt_log, session('iduser19'));
                         echo 1;
                     } else {
                         echo 2;
@@ -147,7 +146,7 @@ class System extends BaseController
                     $delete = $this->model_bdatabase->purgesistema($fecha);
                     if ($delete) {
                         $txt_log = "Log del sistema - Datos eliminado antes de " . $fecha;
-                        $insert_log = $this->model_log->insert_log("000000", "Sistema", $txt_log, $_SESSION['iduser19']);
+                        $insert_log = $this->model_log->insert_log("000000", "Sistema", $txt_log, session('iduser19'));
                         echo 1;
                     } else {
                         echo 2;
@@ -194,3 +193,6 @@ class System extends BaseController
         return $bytes;
     }
 }
+
+
+

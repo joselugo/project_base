@@ -30,8 +30,7 @@ class Seguridad extends BaseController
 
 	public function logout()
 	{
-		session_start();
-		session_destroy();
+		session()->destroy();
 		$this->seguridad->login_back();
 	}
 
@@ -84,7 +83,7 @@ class Seguridad extends BaseController
 			}
 			foreach ($usuario as $value) {
 				$id_usuario = $value->id;
-				$usuario = $this->request->getPost('usuario', TRUE);
+			$usuario_login = $user; // Use the login username from POST
 				$nombre_usuario = $value->nombre;
 				$avatar = $value->avatar;
 				$color_avatar = $value->color_avatar;
@@ -99,25 +98,27 @@ class Seguridad extends BaseController
 				$avatar = '<img src="data:image/jpeg;base64,' . base64_encode($avatar) . '" style="border-radius: 100%" width="34" height="34"/>';
 			}
 
-			session_start();
-			$_SESSION['iduser19'] = $id_usuario;
-			$_SESSION['usuario'] = $usuario;
-			$_SESSION['nombre'] = $nombre_usuario;
-			$_SESSION['avatar'] = $avatar;
-			$_SESSION['nodos'] = $nodos;
-			$_SESSION['sucursales'] = $sucursales;
-			$_SESSION['rol'] = $rol;
-			$_SESSION['background'] =  $img_db[0];;
+			session()->set([
+				'iduser19' => $id_usuario,
+				'id_usuario8291' => $id_usuario,  // Variable adicional para compatibilidad
+			'usuario' => $usuario_login,
+				'nombre' => $nombre_usuario,
+				'avatar' => $avatar,
+				'nodos' => $nodos,
+				'sucursales' => $sucursales,
+				'rol' => $rol,
+				'background' => $img_db[0]
+			]);
 			$hora = date('H:i');
 			$session_id = session_id();
-			$_SESSION['token19'] = substr(base64_encode(md5($session_id)), 0, -1);
+			session()->set('token19', substr(base64_encode(md5($session_id)), 0, -1));
 
 			$key = Services::getSecretKey();
 			$time_a = time(); //2 horas
 			$payload = [
 				'cliente' => $id_usuario,
 				'nombre' => $nombre_usuario,
-				'alias' => $usuario,
+				'alias' => $usuario_login,
 				'iat' => $time_a,
 				'exp' => $time_a + 7200,
 			];
@@ -125,22 +126,19 @@ class Seguridad extends BaseController
 			$this->response->setCookie('token', $token, 3600, "app.netium.com.mx");
 			$this->response->setHeader('token', $token);
 			$user_ip = $this->getUserIP();
-			$insert_log_login = $this->model_log->insert_log_login($_SESSION['iduser19'], $_SESSION['nombre'], $user_ip, "Acceso exitoso");
+			$insert_log_login = $this->model_log->insert_log_login($id_usuario, $nombre_usuario, $user_ip, "Acceso exitoso");
 			echo "success";
 		} else {
 			echo "error";
 			$user_ip = $this->getUserIP();
-			$insert_log_login = $this->model_log->insert_log_login($user, $user, $user_ip, "Usuario o contraseña invalido");
+			// For failed logins, use 0 as default admin ID since idadmin cannot be null
+			$insert_log_login = $this->model_log->insert_log_login(0, $user, $user_ip, "Usuario o contraseña invalido");
 		}
 	}
 
 	public function cerrar_sesion()
 	{
-		session_start();
-		session_unset("id_usuario");
-		session_unset("usuario");
-		session_unset("nombre_usuario");
-		session_unset("tmpcodigoseg");
+		session()->remove(['id_usuario', 'usuario', 'nombre_usuario', 'tmpcodigoseg']);
 		$this->seguridad->login_back();
 	}
 
@@ -222,10 +220,9 @@ class Seguridad extends BaseController
 
 	public function cambiar_mi_contrasenia()
 	{
-		session_start();
 		$oldpaddpassword = $this->request->getPost('oldpaddpassword');
 		$change = $this->request->getPost('newpassword');
-		$idusuario = $_SESSION['iduser19'];
+		$idusuario = session('iduser19');
 
 		$usuario = $this->mdl_seg->get_usuario_contrasenia($idusuario);
 		if ($usuario) {
@@ -266,3 +263,4 @@ class Seguridad extends BaseController
 		}
 	}
 }
+

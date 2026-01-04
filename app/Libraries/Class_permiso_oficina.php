@@ -6,7 +6,7 @@ use App\Models\Model_selectores;
 
 class Class_permiso_oficina
 {
-	var $mdl_select;
+	private $mdl_select;
 	public $string_permisos;
 	function __construct()
 	{

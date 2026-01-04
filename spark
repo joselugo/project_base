@@ -29,8 +29,8 @@ if (substr(php_sapi_name(), 0, 3) === 'cgi')
 	die("The cli tool is not supported when running php-cgi. It needs php-cli to function!\n\n");
 }
 
-// Path to the front controller
-define('FCPATH', __DIR__ . '/public' . DIRECTORY_SEPARATOR);
+// Path to the front controller (for CLI, this is the project root)
+define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
 
 // Load our paths config file
 require 'app/Config/Paths.php';
@@ -38,10 +38,58 @@ require 'app/Config/Paths.php';
 
 $paths = new Config\Paths();
 
+// Define path constants
+define('APPPATH', realpath($paths->appDirectory) . DIRECTORY_SEPARATOR);
+define('SYSTEMPATH', realpath($paths->systemDirectory) . DIRECTORY_SEPARATOR);
+define('ROOTPATH', realpath(FCPATH) . DIRECTORY_SEPARATOR);
+define('WRITEPATH', realpath($paths->writableDirectory) . DIRECTORY_SEPARATOR);
+
+// Define environment
+if (is_file(ROOTPATH . '.env')) {
+    $env = parse_ini_file(ROOTPATH . '.env');
+    if (isset($env['CI_ENVIRONMENT'])) {
+        define('ENVIRONMENT', $env['CI_ENVIRONMENT']);
+    } else {
+        define('ENVIRONMENT', 'development');
+    }
+} else {
+    define('ENVIRONMENT', 'development');
+}
+
 // Ensure the current directory is pointing to the front controller's directory
 chdir(FCPATH);
 
-$app = require rtrim($paths->systemDirectory, '/ ') . '/bootstrap.php';
+/*
+ * ---------------------------------------------------------------
+ * LOAD COMPOSER AUTOLOADER
+ * ---------------------------------------------------------------
+ */
+require_once ROOTPATH . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+/*
+ * ---------------------------------------------------------------
+ * LOAD CONSTANTS AND FRAMEWORK
+ * ---------------------------------------------------------------
+ */
+
+// Load app constants
+if (is_file(APPPATH . 'Config' . DIRECTORY_SEPARATOR . 'Constants.php')) {
+    require_once APPPATH . 'Config' . DIRECTORY_SEPARATOR . 'Constants.php';
+}
+
+// Load system functions
+require_once SYSTEMPATH . 'Common.php';
+
+// Load our autoloader and register it
+require_once SYSTEMPATH . 'Config' . DIRECTORY_SEPARATOR . 'AutoloadConfig.php';
+require_once APPPATH . 'Config' . DIRECTORY_SEPARATOR . 'Autoload.php';
+require_once APPPATH . 'Config' . DIRECTORY_SEPARATOR . 'Modules.php';
+
+$loader = \CodeIgniter\Config\Services::autoloader();
+$loader->initialize(new \Config\Autoload(), new \Config\Modules());
+$loader->register();
+
+$app = \Config\Services::codeigniter();
 
 // Grab our Console
 $console = new \CodeIgniter\CLI\Console($app);
@@ -54,8 +102,5 @@ ini_set('display_errors', 1);
 $console->showHeader();
 
 // fire off the command in the main framework.
-$response = $console->run();
-if ($response->getStatusCode() >= 300)
-{
-	exit($response->getStatusCode());
-}
+$exitCode = $console->run();
+exit($exitCode);

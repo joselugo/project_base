@@ -24,13 +24,12 @@ class Sistema extends BaseController
     $this->model_log = new Model_log();
     $this->key_oficina = new Class_permiso_oficina();
     $this->key_nodo = new Class_permiso_oficina();
-    session_start();
   }
 
   public function gestion_personal()
   {
-    if (isset($_SESSION['iduser19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('GESTION_PERSONAL'));
+    if ($this->isLoggedIn()) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('GESTION_PERSONAL'));
       if ($tipoacceso > 0) {
         $data['tipoacceso'] = $tipoacceso;
         echo view('sistema/gestion_personal/index', $data);
@@ -40,10 +39,10 @@ class Sistema extends BaseController
 
   public function get_personal_json()
   {
-    if (isset($_SESSION['iduser19'])) {
-      $where_permiso_sucursal_login = $this->key_oficina->get_permiso_sucursal_login($_SESSION['sucursales']);
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('GESTION_PERSONAL'));
-      $key_oficina = $this->key_oficina->get_permiso_sucursal_gestion($_SESSION['sucursales']);
+    if ($this->isLoggedIn()) {
+      $where_permiso_sucursal_login = $this->key_oficina->get_permiso_sucursal_login(session('sucursales'));
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('GESTION_PERSONAL'));
+      $key_oficina = $this->key_oficina->get_permiso_sucursal_gestion(session('sucursales'));
 
       if ($tipoacceso > 0) {
         $all_items = $this->model_sistema->traer_usuarios($where_permiso_sucursal_login);
@@ -53,7 +52,7 @@ class Sistema extends BaseController
         if ($all_items) {
           foreach ($all_items as $items) {
             ($items->estado == '1') ? $estado = '<span class="label label-success">HABILITADO</span>' : $estado = '<span class="label label-danger">DESHABILITADO</span>';
-            $tool = '<td class=" text-center"><a href="#sistema/edit_personal?id=' . $items->id . '&amp;token=' . $_SESSION['token19'] . '" data-toggle="tooltip" title="Editar" class="btn btn-default btn-icon btn-sm"><i class="far fa-edit"></i></a><a data-toggle="tooltip" title="Eliminar" class="btn btn-default btn-icon btn-sm" onclick="delete_operador(\'' . $items->id . '\',\'' . $_SESSION['token19'] . '\',\'' . $items->nombre . '\')"><i class="far fa-trash-alt" aria-hidden="true"></i></a></td>';
+            $tool = '<td class=" text-center"><a href="#sistema/edit_personal?id=' . $items->id . '&amp;token=' . session('token19') . '" data-toggle="tooltip" title="Editar" class="btn btn-default btn-icon btn-sm"><i class="far fa-edit"></i></a><a data-toggle="tooltip" title="Eliminar" class="btn btn-default btn-icon btn-sm" onclick="delete_operador(\'' . $items->id . '\',\'' . session('token19') . '\',\'' . $items->nombre . '\')"><i class="far fa-trash-alt" aria-hidden="true"></i></a></td>';
             $array_item = array(
               "id" => $items->id,
               "nombre" => $items->nombre,
@@ -75,9 +74,9 @@ class Sistema extends BaseController
 
   public function edit_personal()
   {
-    if (isset($_SESSION['iduser19']) && $this->request->getGet('token') == $_SESSION['token19']) {
-      $where_permiso_sucursal_select = $this->key_oficina->get_permiso_sucursal_select($_SESSION['sucursales']);
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('GESTION_PERSONAL'));
+    if ($this->isLoggedIn() && $this->request->getGet('token') == session('token19')) {
+      $where_permiso_sucursal_select = $this->key_oficina->get_permiso_sucursal_select(session('sucursales'));
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('GESTION_PERSONAL'));
       if ($tipoacceso > 0) {
         $id = $this->request->getGet('id');
         $row = $this->model_sistema->traer_usuarios_by_id($id);
@@ -259,8 +258,8 @@ class Sistema extends BaseController
 
   public function get_permisos_rol()
   {
-    if (isset($_SESSION['iduser19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('GESTION_PERSONAL'));
+    if ($this->isLoggedIn()) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('GESTION_PERSONAL'));
       if ($tipoacceso > 0) {
         $id_rol = $this->request->getPost('id_rol');
         $rol_permisos = $this->model_sistema->get_permisos_rol($id_rol);
@@ -271,8 +270,8 @@ class Sistema extends BaseController
 
   public function update_perfil()
   {
-    if (isset($_SESSION['iduser19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('GESTION_PERSONAL'));
+    if ($this->isLoggedIn()) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('GESTION_PERSONAL'));
       if ($tipoacceso > 0) {
         $id = $this->request->getPost('id');
         $nombre = $this->request->getPost('nombre');
@@ -306,7 +305,7 @@ class Sistema extends BaseController
         }
         $update = $this->model_sistema->update_perfil($id, $arrayName);
         if ($update) {
-          $insert_log = $this->model_log->insert_log("000000", "operador", "Operador editado <b>#" . $id . " " . $nombre . "</b>", $_SESSION['iduser19']);
+          $insert_log = $this->model_log->insert_log("000000", "operador", "Operador editado <b>#" . $id . " " . $nombre . "</b>", session('iduser19'));
           echo 1;
         } else {
           echo 2;
@@ -317,8 +316,8 @@ class Sistema extends BaseController
 
   public function update_permisos_tabla()
   {
-    if (isset($_SESSION['iduser19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('GESTION_PERSONAL'));
+    if ($this->isLoggedIn()) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('GESTION_PERSONAL'));
       if ($tipoacceso > 0) {
         $listaPermisos = json_decode($this->request->getPost('permisos'));
         $id_usuario = $this->request->getPost('id_usuario');
@@ -335,9 +334,9 @@ class Sistema extends BaseController
 
   public function new_operador()
   {
-    if (isset($_SESSION['iduser19']) && isset($_SESSION['token19'])) {
-      $where_permiso_sucursal_select = $this->key_oficina->get_permiso_sucursal_select($_SESSION['sucursales']);
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('GESTION_PERSONAL'));
+    if ($this->isLoggedInWithToken()) {
+      $where_permiso_sucursal_select = $this->key_oficina->get_permiso_sucursal_select(session('sucursales'));
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('GESTION_PERSONAL'));
       /* var_dump($tipoacceso); */
       if ($tipoacceso >= 2) {
         /////////////////////////////
@@ -412,8 +411,8 @@ class Sistema extends BaseController
 
   public function new_perfil()
   {
-    if (isset($_SESSION['iduser19']) && isset($_SESSION['token19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('GESTION_PERSONAL'));
+    if ($this->isLoggedInWithToken()) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('GESTION_PERSONAL'));
       if ($tipoacceso > 0) {
 
         $nombre = $this->request->getPost('nombre');
@@ -451,8 +450,8 @@ class Sistema extends BaseController
 
   public function insert_permisos_tabla()
   {
-    if (isset($_SESSION['iduser19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('GESTION_PERSONAL'));
+    if ($this->isLoggedIn()) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('GESTION_PERSONAL'));
       if ($tipoacceso > 0) {
         $listaPermisos = json_decode($this->request->getPost('permisos'));
         $id_usuario = $this->model_sistema->get_last_login();
@@ -466,12 +465,12 @@ class Sistema extends BaseController
 
   public function delete_operador()
   {
-    if (isset($_SESSION['iduser19']) && $this->request->getPost('token') == $_SESSION['token19']) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('GESTION_PERSONAL'));
+    if ($this->isLoggedIn() && $this->request->getGet('token') == session('token19')) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('GESTION_PERSONAL'));
       if ($tipoacceso > 0) {
         $id = $this->request->getPost('id');
         $nombre = $this->request->getPost('nombre');
-        $insert_log = $this->model_log->insert_log("000000", "operador", "Operador eliminado <b>#" . $id . " " . $nombre . "</b>", $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log("000000", "operador", "Operador eliminado <b>#" . $id . " " . $nombre . "</b>", session('iduser19'));
         $delete = $this->model_sistema->delete_operador($id);
         if ($delete) echo "succes";
         else echo "error";
@@ -486,7 +485,7 @@ class Sistema extends BaseController
 
   public function miperfil()
   {
-    $perfil = $this->model_sistema->get_datos_perfil($_SESSION['iduser19']);
+    $perfil = $this->model_sistema->get_datos_perfil(session('iduser19'));
     if ($perfil) {
       $data['perfil'] = $perfil;
       return view('historial_personal/miperfil.php', $data);
@@ -511,7 +510,7 @@ class Sistema extends BaseController
       'timeout' => $timeout,
       'movil' => $user_movil
     ];
-    $result = $this->model_sistema->update_perfil($_SESSION['iduser19'], $data);
+    $result = $this->model_sistema->update_perfil(session('iduser19'), $data);
     if ($result) {
       echo 1;
     } else {
@@ -519,3 +518,6 @@ class Sistema extends BaseController
     }
   }
 }
+
+
+

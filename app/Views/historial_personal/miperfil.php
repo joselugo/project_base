@@ -100,7 +100,7 @@
         <center class="m-t-30">
           <img width="100" height="100" class="avataradmin miprofile" data-name="<?= $perfil->nombre; ?>" style="border-radius: 50%;" />
           <h4 class="card-title m-t-10"><?= $perfil->nombre; ?></h4>
-          <h6 class="card-subtitle">Administrador</h6>
+          <h6 class="card-subtitle">Administrador</h6><!-- TODO: deberia traer el rol del perfil -->
           <br>
           <!--   <button type="button" onClick="getfb()" class="btnfb btn btn-xs btn-white" data-toggle="tooltip" title="Obtener Avatar desde Facebook" style="margin-right: 5px;font-size: 10px;padding: 4px 7px;"><i class="fab fa-facebook-f"></i>acebook</button>
 
@@ -129,7 +129,7 @@
         <!-- Nav tabs -->
         <ul class="nav nav-tabs profile-tab" role="tablist">
           <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#datos" role="tab" aria-expanded="true">Mis datos</a> </li>
-          <!-- <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#configoperdor" role="tab" aria-expanded="false">Configuración</a> </li> -->
+          <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#configoperdor" role="tab" aria-expanded="false">Configuración</a> </li>
         </ul>
         <!-- Tab panes -->
         <div class="tab-content">

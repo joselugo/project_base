@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class Model_oficina extends Model
 {
-  var $database;
+  private $database;
   public function __construct()
   {
     $database = \Config\Database::connect('default');

@@ -271,7 +271,7 @@
             <!-- end brand -->
             <!-- begin login-content -->
             <div class="login-content">
-                <form method="post" class='form-login-new' action="/admin/login?" id="loginForm">
+                <form method="post" class='form-login-new' action="<?= base_url() ?>seguridad/iniciar_sesion" id="loginForm">
                     <input type="hidden" id="token" value="e6f3a3274906a0b6bd572468a11db0ab">
                     <input type="hidden" name="security_code" id="security_code" value="eef58ebe4d9e825d950b5ec69c01dc2d">
 

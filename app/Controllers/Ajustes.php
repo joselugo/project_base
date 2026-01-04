@@ -37,13 +37,12 @@ class Ajustes extends BaseController
     $this->model_selectores = new Model_selectores();
     $this->model_configuracion = new Model_configuracion();
     date_default_timezone_set('America/Mexico_City');
-    session_start();
   }
 
   public function index()
   {
-    if (isset($_SESSION['iduser19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('AJUSTES'));
+    if (session('iduser19')) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('AJUSTES'));
       if ($tipoacceso >= 1) {
         echo view('ajustes/index');
       } else {
@@ -56,7 +55,7 @@ class Ajustes extends BaseController
 
   public function general()
   {
-    if ($this->seguridad->access('GENERAL', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('GENERAL', 'ESCRITURA', session('iduser19'))) {
       $ids = array(1, 31, 32, 30, 26, 2, 8, 9, 64);
       $config = $this->model_configuracion->get_configuracion($ids);
       if ($config) {
@@ -70,8 +69,8 @@ class Ajustes extends BaseController
 
   public function tickets()
   {
-    if (isset($_SESSION['iduser19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('DEPARTAMENTOS'));
+    if ($this->isLoggedIn()) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('DEPARTAMENTOS'));
       if ($tipoacceso >= 1) {
         echo view('ajustes/tickets');
       } else {
@@ -84,8 +83,8 @@ class Ajustes extends BaseController
 
   public function log()
   {
-    if (isset($_SESSION['iduser19'])) {
-      if ($this->seguridad->access('LOGS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->isLoggedIn()) {
+      if ($this->seguridad->access('LOGS', 'LECTURA', session('iduser19'))) {
         $data['inicio'] = date('d/m/Y', strtotime("first day of this month"));
         $data['final'] = date('t/m/Y');
         return view('ajustes/log/log', $data);
@@ -97,7 +96,7 @@ class Ajustes extends BaseController
 
   public function log_sistema_json()
   {
-    if ($this->seguridad->access('LOGS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('LOGS', 'LECTURA', session('iduser19'))) {
       $inicio = $this->request->getGet('inicio');
       $final = $this->request->getGet('final');
       $log = $this->model_log2->get_log_date($inicio, $final);
@@ -130,8 +129,8 @@ class Ajustes extends BaseController
 
   public function get_departaments_tickets_json()
   {
-    if (isset($_SESSION['iduser19'])) {
-      $tipoacceso = $this->seguridad->check_permission($_SESSION['iduser19'], $this->seguridad->key_access('DEPARTAMENTOS'));
+    if ($this->isLoggedIn()) {
+      $tipoacceso = $this->seguridad->check_permission(session('iduser19'), $this->seguridad->key_access('DEPARTAMENTOS'));
       if ($tipoacceso >= 1) {
 
         $tickets = $this->model_ticket->get_departaments_tickets_json();
@@ -182,14 +181,14 @@ class Ajustes extends BaseController
 
   public function ajuste_sucursal()
   {
-    if ($this->seguridad->access('OFICINA', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('OFICINA', 'LECTURA', session('iduser19'))) {
       return view("ajustes/oficinas/ajustes_oficina");
     }
   }
 
   public function get_sucursales()
   {
-    $permiso = $this->seguridad->access('OFICINA', 'LECTURA', $_SESSION['iduser19']);
+    $permiso = $this->seguridad->access('OFICINA', 'LECTURA', session('iduser19'));
     if ($permiso) {
       $sucursales = $this->model_sucursal->get_sucursales();
       if ($sucursales) {
@@ -225,7 +224,7 @@ class Ajustes extends BaseController
 
   public function editar_sucursal()
   {
-    if ($this->seguridad->access('OFICINA', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('OFICINA', 'ESCRITURA', session('iduser19'))) {
       $idsucursal = $this->request->getGet('idsucursal');
       $sucursal = $this->model_sucursal->get_sucursal($idsucursal);
       /* $nodos = $this->model_sucursal->get_sucursal_nodos($idsucursal); */
@@ -248,7 +247,7 @@ class Ajustes extends BaseController
 
   public function save_editar_sucursal()
   {
-    if ($this->seguridad->access('OFICINA', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('OFICINA', 'ESCRITURA', session('iduser19'))) {
       $idsucursal = $this->request->getGet('idsucursal');
       $sucursal_nombre = $this->request->getPost('sucursal[nombre]');
       $sucursal_direccion = $this->request->getPost('sucursal[direccion]');
@@ -270,7 +269,7 @@ class Ajustes extends BaseController
       if ($result_save_sucursal) {
         echo 1;
         $txt_log = "Sucursal modificada ID : $idsucursal";
-        $insert_log = $this->model_log->insert_log(0, "Configuracion[sucursal]", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(0, "Configuracion[sucursal]", $txt_log, session('iduser19'));
       } else {
         echo 2;
       }
@@ -279,7 +278,7 @@ class Ajustes extends BaseController
 
   public function save_logo_sistema()
   {
-    if ($this->seguridad->access('OFICINA', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('OFICINA', 'ESCRITURA', session('iduser19'))) {
       $idsucursal = $this->request->getGet('idsucursal');
       $image = $this->request->getFile('logosistema');
       $imagen = $image;
@@ -315,7 +314,7 @@ class Ajustes extends BaseController
         } else {
           $txt_log = "Logo de facturas y recibos modificada de la sucursal ID : $idsucursal";
         }
-        $insert_log = $this->model_log->insert_log(0, "Configuracion[sucursal]", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(0, "Configuracion[sucursal]", $txt_log, session('iduser19'));
         $data = [
           'archivo' => $archivo,
           'tipo' => $image ? 'logo_principal' : 'logo_faturas'
@@ -327,21 +326,21 @@ class Ajustes extends BaseController
 
   public function modal_mapa_sucursal()
   {
-    if ($this->seguridad->access('OFICINA', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('OFICINA', 'LECTURA', session('iduser19'))) {
       return view('ajustes/oficinas/utils/modal_mapa');
     }
   }
 
   public function new_sucursal()
   {
-    if ($this->seguridad->access('OFICINA', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('OFICINA', 'ESCRITURA', session('iduser19'))) {
       return view("ajustes/oficinas/utils/new_oficina");
     }
   }
 
   public function save_new_sucursal()
   {
-    if ($this->seguridad->access('OFICINA', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('OFICINA', 'ESCRITURA', session('iduser19'))) {
       $sucursal_nombre = $this->request->getPost('sucursal[nombre]');
       $alias = $this->request->getPost('sucursal[alias]');
       $sucursal_nodos = $this->request->getPost('nodos[]');
@@ -360,7 +359,7 @@ class Ajustes extends BaseController
           $this->model_ajustes->save_nodo_sucursal($data);
         }
         $txt_log = "Se agrego una nueva sucursal ID : $idsucursal";
-        $insert_log = $this->model_log->insert_log(0, "facturas(categoria)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(0, "facturas(categoria)", $txt_log, session('iduser19'));
         echo 1;
       } else {
         echo 2;
@@ -370,7 +369,7 @@ class Ajustes extends BaseController
 
   public function cloud()
   {
-    if ($this->seguridad->access('CLOUD', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('CLOUD', 'LECTURA', session('iduser19'))) {
 
       $row_dropbox = $this->model_ajustes->get_cloud('dropbox');
       if ($row_dropbox->estado == "on") {
@@ -393,7 +392,7 @@ class Ajustes extends BaseController
 
   public function savecloud()
   {
-    if ($this->seguridad->access('CLOUD', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('CLOUD', 'ESCRITURA', session('iduser19'))) {
       $token_dropbox = $this->request->getPost('token_dropbox');
       $estado_dropbox = $this->request->getPost('estado_dropbox');
       $upbackup_dropbox = $this->request->getPost('upbackup_dropbox');
@@ -409,7 +408,7 @@ class Ajustes extends BaseController
 
   public function spacedropbox()
   {
-    if ($this->seguridad->access('CLOUD', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('CLOUD', 'LECTURA', session('iduser19'))) {
 
       $row_dropbox = $this->model_ajustes->get_cloud('dropbox');
       $headers = array(
@@ -464,7 +463,7 @@ class Ajustes extends BaseController
 
   public function view_login()
   {
-    if ($this->seguridad->access('GENERAL', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('GENERAL', 'ESCRITURA', session('iduser19'))) {
       $ids = array(64);
       $img = $this->request->getGet('img');
       if ($img) {
@@ -479,7 +478,7 @@ class Ajustes extends BaseController
 
   public function save_general()
   {
-    if ($this->seguridad->access('GENERAL', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('GENERAL', 'ESCRITURA', session('iduser19'))) {
       $nombre_empresa = $this->request->getPost('ajuste[nombre_empresa]');
       $direccion_empresa = $this->request->getPost('ajuste[direccion_empresa]');
       $telefono_empresa = $this->request->getPost('ajuste[telefono_empresa]');
@@ -529,7 +528,7 @@ class Ajustes extends BaseController
       $update = $this->model_configuracion->update_batch($data, 'id');
       if ($update) {
         $txt_log = "Modificacion de los ajustes generales del SISTEMA";
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(general)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(general)", $txt_log, session('iduser19'));
       }
       echo $update ? 1 : 2;
     }
@@ -537,7 +536,7 @@ class Ajustes extends BaseController
 
   public function facturacion()
   {
-    if ($this->seguridad->access('CONFIG_FACTURACION', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('CONFIG_FACTURACION', 'LECTURA', session('iduser19'))) {
       $ids = array(11, 29, 62, 19, 12, 38, 34, 54, 119, 35, 90, 43, 45, 63, 53, 55, 80, 107);
       $config = $this->model_configuracion->get_configuracion_name($ids);
       if ($config) {
@@ -551,7 +550,7 @@ class Ajustes extends BaseController
 
   public function save_config_facturacion()
   {
-    if ($this->seguridad->access('CONFIG_FACTURACION', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('CONFIG_FACTURACION', 'LECTURA', session('iduser19'))) {
       $log = $this->request->getPost('log');
       $moneda_letra = $this->request->getPost('ajuste[moneda_letra]');
       $moneda_unidad = $this->request->getPost('ajuste[moneda_unidad]');
@@ -649,7 +648,7 @@ class Ajustes extends BaseController
       $update = $this->model_configuracion->update_batch($data, 'id');
       if ($update) {
         $txt_log = "Modificacion de los ajustes generales de las FACTURAS";
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(facturas)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(facturas)", $txt_log, session('iduser19'));
       }
       echo $update ? 1 : 2;
     }
@@ -657,14 +656,14 @@ class Ajustes extends BaseController
 
   public function pasarelas_pago()
   {
-    if ($this->seguridad->access('PASARELAS_PAGO', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PASARELAS_PAGO', 'LECTURA', session('iduser19'))) {
       return view('ajustes/pasarelas_pago/pasarelas_pago');
     }
   }
 
   public function get_pasarelas_pago_otros_json()
   {
-    if ($this->seguridad->access('PASARELAS_PAGO', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PASARELAS_PAGO', 'LECTURA', session('iduser19'))) {
       $pasarelas = $this->model_configuracion->get_pasarelas();
       if ($pasarelas) {
         foreach ($pasarelas as $key => $value) {
@@ -685,19 +684,19 @@ class Ajustes extends BaseController
 
   public function modal_new_pasarela()
   {
-    if ($this->seguridad->access('PASARELAS_PAGO', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PASARELAS_PAGO', 'ESCRITURA', session('iduser19'))) {
       return view('ajustes/pasarelas_pago/modal_new');
     }
   }
 
   public function delete_pasarela_pago_otros()
   {
-    if ($this->seguridad->access('PASARELAS_PAGO', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PASARELAS_PAGO', 'ESCRITURA', session('iduser19'))) {
       $id = $this->request->getPost('id');
       $delete = $this->model_configuracion->delete_pasarela_otros($id);
       if ($delete) {
         $txt_log = "Pasarela de pago(otros) eliminada ID: " . $id;
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(pasarelas de pago)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(pasarelas de pago)", $txt_log, session('iduser19'));
       }
       $delete ? 1 : 2;
     }
@@ -705,7 +704,7 @@ class Ajustes extends BaseController
 
   public function edit_pasarela_otros()
   {
-    if ($this->seguridad->access('PASARELAS_PAGO', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PASARELAS_PAGO', 'ESCRITURA', session('iduser19'))) {
       $id = $this->request->getGet('id');
       $pasarela = $this->model_configuracion->get_pasarela_otro($id);
       if ($pasarela) {
@@ -719,7 +718,7 @@ class Ajustes extends BaseController
 
   public function save_edit_pasarela()
   {
-    if ($this->seguridad->access('PASARELAS_PAGO', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PASARELAS_PAGO', 'ESCRITURA', session('iduser19'))) {
       $id = $this->request->getPost('pasarela[id]');
       $pasarela = $this->request->getPost('pasarela[pasarela]');
       $dsp1 = $this->request->getPost('pasarela[dsp1]');
@@ -736,7 +735,7 @@ class Ajustes extends BaseController
       $update = $this->model_configuracion->update_pasarela_otro($id, $data);
       if ($update) {
         $txt_log = "Pasarela de pago(otros) editada ID: " . $id;
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(pasarelas de pago)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(pasarelas de pago)", $txt_log, session('iduser19'));
       }
       echo $update ? 1 : 2;
     }
@@ -744,7 +743,7 @@ class Ajustes extends BaseController
 
   public function new_pasarela_otros()
   {
-    if ($this->seguridad->access('PASARELAS_PAGO', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('PASARELAS_PAGO', 'ESCRITURA', session('iduser19'))) {
       $pasarela = $this->request->getPost('pasarela[pasarela]');
       $dsp1 = $this->request->getPost('pasarela[dsp1]');
       $dsp2 = $this->request->getPost('pasarela[dsp2]');
@@ -760,7 +759,7 @@ class Ajustes extends BaseController
       $insert = $this->model_configuracion->new_pasarela_otros($data);
       if ($insert) {
         $txt_log = "Nueva pasarela de pago(otros) insertada.";
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(pasarelas de pago)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(pasarelas de pago)", $txt_log, session('iduser19'));
       }
       echo $insert ? 1 : 2;
     }
@@ -768,14 +767,14 @@ class Ajustes extends BaseController
 
   public function ajustes_tickets()
   {
-    if ($this->seguridad->access('TICKETS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('TICKETS', 'LECTURA', session('iduser19'))) {
       return view('ajustes/tickets/tickets');
     }
   }
 
   public function ticket_json()
   {
-    if ($this->seguridad->access('TICKETS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('TICKETS', 'LECTURA', session('iduser19'))) {
       $departamentos = $this->model_configuracion->get_departamentos();
       if ($departamentos) {
         foreach ($departamentos as $value) {
@@ -795,7 +794,7 @@ class Ajustes extends BaseController
 
   public function edit_departamento()
   {
-    if ($this->seguridad->access('TICKETS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('TICKETS', 'ESCRITURA', session('iduser19'))) {
       $id = $this->request->getGet('id');
       $departamento = $this->model_configuracion->get_departamento($id);
       if ($departamento) {
@@ -809,12 +808,12 @@ class Ajustes extends BaseController
 
   public function delete_departamento()
   {
-    if ($this->seguridad->access('TICKETS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('TICKETS', 'ESCRITURA', session('iduser19'))) {
       $id = $this->request->getPost('id');
       $delete = $this->model_configuracion->delete_departamento($id);
       if ($delete) {
         $txt_log = "Departamento eliminado ID: " . $id;
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(tickets)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(tickets)", $txt_log, session('iduser19'));
       }
       echo $delete ? 1 : 2;
     }
@@ -822,7 +821,7 @@ class Ajustes extends BaseController
 
   public function save_edit_departamento()
   {
-    if ($this->seguridad->access('TICKETS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('TICKETS', 'ESCRITURA', session('iduser19'))) {
       $id = $this->request->getPost('id');
       $dp = $this->request->getPost('tk[dp]');
       $dsp = $this->request->getPost('tk[dsp]');
@@ -841,7 +840,7 @@ class Ajustes extends BaseController
       $update = $this->model_configuracion->update_departamento($id, $data);
       if ($update) {
         $txt_log = "Departamento editado ID: " . $id;
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(tickets)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(tickets)", $txt_log, session('iduser19'));
       }
       echo $update ? 1 : 2;
     }
@@ -849,14 +848,14 @@ class Ajustes extends BaseController
 
   public function nuevo_departamento()
   {
-    if ($this->seguridad->access('TICKETS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('TICKETS', 'ESCRITURA', session('iduser19'))) {
       return view('ajustes/tickets/modal_nuevo_departamento');
     }
   }
 
   public function save_nuevo_departamento()
   {
-    if ($this->seguridad->access('TICKETS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('TICKETS', 'ESCRITURA', session('iduser19'))) {
       $dp = $this->request->getPost('tk[dp]');
       $dsp = $this->request->getPost('tk[dsp]');
       $maildp = $this->request->getPost('tk[maildp]');
@@ -872,7 +871,7 @@ class Ajustes extends BaseController
       $insert = $this->model_configuracion->insert_new_departamento($data);
       if ($insert) {
         $txt_log = "Nuevo departamento creado ($dp) ID: " . $insert;
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(tickets)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(tickets)", $txt_log, session('iduser19'));
       }
       echo $insert ? 1 : 2;
     }
@@ -880,7 +879,7 @@ class Ajustes extends BaseController
 
   public function cambios_masivos()
   {
-    if ($this->seguridad->access('CAMBIOS_MASIVOS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('CAMBIOS_MASIVOS', 'LECTURA', session('iduser19'))) {
       $servers = $this->model_selectores->get_all_nodos();
       $planes = $this->model_selectores->get_planes();
       if ($planes and $servers) {
@@ -894,7 +893,7 @@ class Ajustes extends BaseController
   }
   public function save_cambios_masivos()
   {
-    if ($this->seguridad->access('CAMBIOS_MASIVOS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('CAMBIOS_MASIVOS', 'ESCRITURA', session('iduser19'))) {
       $nodo = $this->request->getPost('nodo');
       $perfil = $this->request->getPost('perfil');
       $diapago = $this->request->getPost('diapago');
@@ -950,7 +949,7 @@ class Ajustes extends BaseController
           $txt_perfil = $perfil == 0 ? "cualquiera" : $perfil;
           $txt_diapago = $diapago == 0 ? "cualquiera" : $diapago;
           $txt_log = "Se realizo un cambio masivo de la configuracion de los clientes con los sig parametros (nodo:$txt_nodo, perfil: $txt_perfil, dia de pago: $txt_diapago)";
-          $insert_log = $this->model_log->insert_log(000000, "ajustes(cambios masivos)", $txt_log, $_SESSION['iduser19']);
+          $insert_log = $this->model_log->insert_log(000000, "ajustes(cambios masivos)", $txt_log, session('iduser19'));
         }
         echo $update ? 1 : 2;
       } else {
@@ -960,7 +959,7 @@ class Ajustes extends BaseController
   }
   public function consulta_cambios_masivos()
   {
-    if ($this->seguridad->access('CAMBIOS_MASIVOS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('CAMBIOS_MASIVOS', 'ESCRITURA', session('iduser19'))) {
       $nodo = $this->request->getPost('nodo');
       $perfil = $this->request->getPost('perfil');
       $dia = $this->request->getPost('dia');
@@ -975,13 +974,13 @@ class Ajustes extends BaseController
   }
   public function zonas()
   {
-    if ($this->seguridad->access('ZONAS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('ZONAS', 'LECTURA', session('iduser19'))) {
       return view('ajustes/zonas/zonas');
     }
   }
   public function get_zonas_json()
   {
-    if ($this->seguridad->access('ZONAS', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('ZONAS', 'LECTURA', session('iduser19'))) {
       $zonas = $this->model_configuracion->get_zonas();
       if ($zonas) {
         foreach ($zonas as $value) {
@@ -1008,19 +1007,19 @@ class Ajustes extends BaseController
   }
   public function delete_zona()
   {
-    if ($this->seguridad->access('ZONAS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('ZONAS', 'ESCRITURA', session('iduser19'))) {
       $id = $this->request->getPost('id');
       $delete = $this->model_configuracion->delete_zona($id);
       if ($delete) {
         $txt_log = "Zona eliminada ID: " . $id;
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(zonas)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(zonas)", $txt_log, session('iduser19'));
       }
       echo $delete ? 1 : 2;
     }
   }
   public function save_new_zona()
   {
-    if ($this->seguridad->access('ZONAS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('ZONAS', 'ESCRITURA', session('iduser19'))) {
       $zona = $this->request->getPost('zona');
       $data = [
         "zona" => $zona
@@ -1028,20 +1027,20 @@ class Ajustes extends BaseController
       $insert = $this->model_configuracion->insert_new_zona($data);
       if ($insert) {
         $txt_log = "Zona insertada ($zona) ID: " . $insert;
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(zonas)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(zonas)", $txt_log, session('iduser19'));
       }
       echo $insert ? 1 : 2;
     }
   }
   public function modal_new_zona()
   {
-    if ($this->seguridad->access('ZONAS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('ZONAS', 'ESCRITURA', session('iduser19'))) {
       return view('ajustes/zonas/modal_new_zona');
     }
   }
   public function modal_edit_zona()
   {
-    if ($this->seguridad->access('ZONAS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('ZONAS', 'ESCRITURA', session('iduser19'))) {
       $id = $this->request->getGet('id');
       $zona = $this->model_configuracion->get_zona($id);
       if ($zona) {
@@ -1054,7 +1053,7 @@ class Ajustes extends BaseController
   }
   public function save_edit_zona()
   {
-    if ($this->seguridad->access('ZONAS', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('ZONAS', 'ESCRITURA', session('iduser19'))) {
       $id = $this->request->getPost('id');
       $zona = $this->request->getPost('zona');
       $data = [
@@ -1063,14 +1062,14 @@ class Ajustes extends BaseController
       $update = $this->model_configuracion->update_zona($id, $data);
       if ($update) {
         $txt_log = "Zona editada ID: " . $id;
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(zonas)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(zonas)", $txt_log, session('iduser19'));
       }
       echo $update ? 1 : 2;
     }
   }
   public function save_sms()
   {
-    if ($this->seguridad->access('CLOUD', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('CLOUD', 'LECTURA', session('iduser19'))) {
       $userapi = $this->request->getPost('2[userapi]');
       $idequipo = $this->request->getPost('2[idequipo]');
       $limite = $this->request->getPost('2[limite]');
@@ -1088,14 +1087,14 @@ class Ajustes extends BaseController
       $update = $this->model_configuracion->update_sms(2, $data);
       if ($update) {
         $txt_log = "Configuracion de sms editada ID: 2";
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(sms)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(sms)", $txt_log, session('iduser19'));
       }
       echo $update ? 1 : 2;
     }
   }
   public function sms()
   {
-    if ($this->seguridad->access('CLOUD', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('CLOUD', 'LECTURA', session('iduser19'))) {
       $sms = $this->model_configuracion->get_sms();
       $smsconfig = $this->model_sms->get_config('2');
       if ($sms and $smsconfig) {
@@ -1124,7 +1123,7 @@ class Ajustes extends BaseController
   }
   public function google()
   {
-    if ($this->seguridad->access('GOOGLE', 'LECTURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('GOOGLE', 'LECTURA', session('iduser19'))) {
       $ids = array(44);
       $config = $this->model_configuracion->get_configuracion_name($ids);
       if ($config) {
@@ -1137,7 +1136,7 @@ class Ajustes extends BaseController
   }
   public function save_google()
   {
-    if ($this->seguridad->access('GOOGLE', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('GOOGLE', 'ESCRITURA', session('iduser19'))) {
       $keyapigoogle = $this->request->getPost('ajuste[keyapigoogle]');
       $data = [
         'value' => $keyapigoogle
@@ -1145,7 +1144,7 @@ class Ajustes extends BaseController
       $update = $this->model_configuracion->save_google(44, $data);
       if ($update) {
         $txt_log = "Api de Google actualizada.";
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(google)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(google)", $txt_log, session('iduser19'));
       }
       echo $update ? 1 : 2;
     }
@@ -1153,20 +1152,20 @@ class Ajustes extends BaseController
   public function delete_sucursal()
   {
     $id = $this->request->getPost('id');
-    $permiso = $this->seguridad->access('SUCURSAL', 'LECTURA', $_SESSION['iduser19']);
+    $permiso = $this->seguridad->access('SUCURSAL', 'LECTURA', session('iduser19'));
     if ($permiso) {
       $delete_sucursal = $this->model_configuracion->delete_sucursal($id);
       if ($delete_sucursal) {
         $this->model_configuracion->delete_relacion_sucursal_nodo($id);
         $txt_log = "Sucursal eliminada ID: $id";
-        $insert_log = $this->model_log->insert_log(000000, "sucursal", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "sucursal", $txt_log, session('iduser19'));
       }
       echo $delete_sucursal ? 1 : 2;
     }
   }
   public function modal_ajustes_almacen()
   {
-    $permiso = $this->seguridad->Acceso_void('AJUSTES_ALMACEN', 'ESCRITURA', $_SESSION['iduser19']);
+    $permiso = $this->seguridad->Acceso_void('AJUSTES_ALMACEN', 'ESCRITURA', session('iduser19'));
     $ids = array(120, 122);
     $config = $this->model_configuracion->get_configuracion_name($ids);
     $data = array();
@@ -1199,7 +1198,7 @@ class Ajustes extends BaseController
   }
   public function save_personalizacion_almacen()
   {
-    if ($this->seguridad->access('AJUSTES_ALMACEN', 'ESCRITURA', $_SESSION['iduser19'])) {
+    if ($this->seguridad->access('AJUSTES_ALMACEN', 'ESCRITURA', session('iduser19'))) {
       $i1 = $this->request->getPost('i1');
       $s1 = $this->request->getPost('s1');
       $i2 = $this->request->getPost('i2');
@@ -1247,7 +1246,7 @@ class Ajustes extends BaseController
       $update2 = $this->model_configuracion->update_batch($data2, 'id');
       if ($update or $update2) {
         $txt_log = "Se actualizo la personalizacion de almacen (ajustes)";
-        $insert_log = $this->model_log->insert_log(000000, "ajustes(almacen)", $txt_log, $_SESSION['iduser19']);
+        $insert_log = $this->model_log->insert_log(000000, "ajustes(almacen)", $txt_log, session('iduser19'));
       }
       if ($update2 or $update) {
         echo 1;
@@ -1257,3 +1256,6 @@ class Ajustes extends BaseController
     }
   }
 }
+
+
+

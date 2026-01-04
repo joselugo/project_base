@@ -8,12 +8,12 @@
                 <div class="cover with-shadow imgsidebarlogin" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url(<?= base_url() ?>public/images/login-bg/<?= $img_slider; ?>); background-size:cover;"></div>
                 <div class="image">
                     <a href="javascript:;">
-                        <?= $_SESSION['avatar']; ?>
+                        <?= $usuario_avatar ?? ''; ?>
 
                     </a>
                 </div>
                 <div class="info">
-                    <?= $_SESSION['nombre'] ?><small><?= $_SESSION['rol'] ?></small>
+                    <?= $usuario_nombre ?? '' ?><small><?= $usuario_rol ?? '' ?></small>
                 </div>
             </li>
         </ul>

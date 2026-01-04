@@ -24,7 +24,24 @@ class App extends BaseConfig
 	|
 	*/
 
-	public $baseURL = 'http://localhost/code_clean/';
+	public $baseURL = 'http://localhost/project_base/';
+
+	/*
+	|--------------------------------------------------------------------------
+	| Allowed Hostnames
+	|--------------------------------------------------------------------------
+	|
+	| If you want to restrict which hostnames are allowed to access this site,
+	| you can specify them here. This can be useful for preventing host header
+	| injection attacks.
+	|
+	| Example:
+	|   $allowedHostnames = ['example.com', 'www.example.com'];
+	|
+	| If this property is empty, no hostname checking will be performed.
+	|
+	*/
+	public $allowedHostnames = [];
 
 
 	/*
@@ -184,15 +201,6 @@ class App extends BaseConfig
 	| Other session cookie settings are shared with the rest of the application,
 	| except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 	|
-	*/
-	public $sessionDriver            = 'CodeIgniter\Session\Handlers\FileHandler';
-	public $sessionCookieName        = 'ci_session';
-	public $sessionExpiration        = 0;
-	public $sessionSavePath          = WRITEPATH . 'session';
-	public $sessionMatchIP           = false;
-	public $sessionTimeToUpdate      = 300;
-	public $sessionRegenerateDestroy = false;
-
 	/*
 	|--------------------------------------------------------------------------
 	| Cookie Related Variables
@@ -230,7 +238,7 @@ class App extends BaseConfig
 	| Comma-separated:	'10.0.1.200,192.168.5.0/24'
 	| Array:		array('10.0.1.200', '192.168.5.0/24')
 	*/
-	public $proxyIPs = '';
+	public $proxyIPs = [];
 
 	/*
 	|--------------------------------------------------------------------------

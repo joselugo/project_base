@@ -58,9 +58,9 @@
         <li class="dropdown navbar-user">
             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" style="padding: 15px 10px">
 
-                <?= $_SESSION['avatar']; ?>
+                <?= $usuario_avatar ?? ''; ?>
 
-                <span class="d-none d-md-inline"><?= $_SESSION['nombre'] ?></span><b class="caret"></b>
+                <span class="d-none d-md-inline"><?= $usuario_nombre ?? '' ?></span><b class="caret"></b>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <a href="#sistema/miperfil" data-toggle="ajax" class="dropdown-item"><i style="font-size:14px;" class="far fa-user"></i> Mi cuenta</a>

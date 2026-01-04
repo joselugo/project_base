@@ -15,6 +15,17 @@ defined('APP_NAMESPACE') || define('APP_NAMESPACE', 'App');
 
 /*
 |--------------------------------------------------------------------------
+| Debug Mode
+|--------------------------------------------------------------------------
+|
+| Debug mode is an experimental flag that can allow for additional
+| performance metrics to be collected during the application's execution.
+| This potentially useful information can be displayed via the Toolbar.
+*/
+defined('CI_DEBUG') || define('CI_DEBUG', false);
+
+/*
+|--------------------------------------------------------------------------
 | Composer Path
 |--------------------------------------------------------------------------
 |

@@ -26,6 +26,25 @@ class Modules
 
 	/*
 	|--------------------------------------------------------------------------
+	| Composer Package Auto-Discovery
+	|--------------------------------------------------------------------------
+	|
+	| Out of the box, CodeIgniter does not auto-discover any Composer installed
+	| packages, but you can enable auto-discovery for each package individually
+	| by adding its package name to the $composerPackages array.
+	|
+	| For example, if you want to auto-discover all Tatter packages you could do:
+	|
+	| $composerPackages = ['tatter/*'];
+	|
+	| Or if you want to auto-discover a specific package:
+	|
+	| $composerPackages = ['tatter/assets'];
+	*/
+	public $composerPackages = [];
+
+	/*
+	|--------------------------------------------------------------------------
 	| Auto-discover Rules
 	|--------------------------------------------------------------------------
 	|

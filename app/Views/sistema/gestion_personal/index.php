@@ -1,33 +1,60 @@
- <ol class="breadcrumb pull-right">
-   <li class="breadcrumb-item"><a href="#index/home">Inicio</a></li>
-   <li class="breadcrumb-item"><a href="#ajustes">Ajustes</a></li>
-   <li class="breadcrumb-item active">Gestión de personal</li>
- </ol>
- <h1 class="page-header">Personal</h1>
- <div class="panel panel-default">
-   <div class="panel-heading">
-     <h4 class="panel-title"><b>GESTIÓN PERSONAL</b></h4>
-     <div class="panel-heading-btn">
-       <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-expand"><i class="fa fa-expand"></i></a>
-       <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload" onclick="updateoperadores()"><i class="fas fa-sync-alt"></i></a>
-     </div>
+<link href="<?= base_url() ?>/public/css/dynamic-forms.css" rel="stylesheet">
+<link href="<?= base_url() ?>/public/css/sistema-global.css" rel="stylesheet">
 
-   </div>
-   <div class="panel-body border-panel">
+<ol class="breadcrumb pull-right">
+  <li class="breadcrumb-item"><a href="#index/home">Inicio</a></li>
+  <li class="breadcrumb-item"><a href="#ajustes">Ajustes</a></li>
+  <li class="breadcrumb-item active">Gestión de personal</li>
+</ol>
+<h1 class="page-header"><i class="fas fa-users"></i> Gestión de Personal</h1>
 
-     <table id="data-operadores" class="display nowrap table table-striped table-bordered dataTable no-footer dtr-inline collapsed" cellspacing="0" width="100%" role="grid" aria-describedby="data-operadores_info" style="width: 100%;">
-       <thead>
-         <tr role="row">
-           <th class="all sorting_asc" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="0" style="width: 20px;" aria-label="ID: Activar para ordenar la columna de manera descendente" aria-sort="ascending">ID</th>
-           <th class="sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="1" style="width: 0px; display: none;" aria-label="Nombre: Activar para ordenar la columna de manera ascendente">Nombre</th>
-           <th class="all sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="2" aria-label="Usuario: Activar para ordenar la columna de manera ascendente">Usuario</th>
-           <th class="all sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="2" aria-label="Usuario: Activar para ordenar la columna de manera ascendente">Oficina</th>
-           <th class="sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="3" style="width: 0px; display: none;" aria-label="Correo: Activar para ordenar la columna de manera ascendente">Correo</th>
-           <th class="sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="4" style="width: 0px; display: none;" aria-label="Rol: Activar para ordenar la columna de manera ascendente">Rol</th>
-           <th class="sorting" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="5" style="width: 0px; display: none;" aria-label="Estado: Activar para ordenar la columna de manera ascendente">Estado</th>
-           <th class="all text-center sorting_disabled" data-orderable="false" rowspan="1" colspan="1" data-column-index="6" style="width: 36px;" aria-label=""></th>
-         </tr>
-       </thead>
+<div class="panel panel-default panel-enhanced">
+  <div class="panel-heading">
+    <h4 class="panel-title"><i class="fas fa-users-cog"></i> <b>GESTIÓN DE PERSONAL</b></h4>
+    <div class="panel-heading-btn">
+      <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-expand" data-toggle="tooltip" title="Expandir panel">
+        <i class="fa fa-expand"></i>
+      </a>
+      <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload" onclick="updateoperadores()" data-toggle="tooltip" title="Recargar datos">
+        <i class="fas fa-sync-alt"></i>
+      </a>
+    </div>
+  </div>
+  <div class="panel-body border-panel">
+    <div class="table-container">
+      <table id="data-operadores" class="display nowrap table table-striped table-bordered dataTable no-footer dtr-inline collapsed" cellspacing="0" width="100%" role="grid" aria-describedby="data-operadores_info" style="width: 100%;">
+        <thead>
+          <tr role="row">
+            <th class="all sorting_asc text-center" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="0" style="width: 60px;" aria-label="ID: Activar para ordenar la columna de manera descendente" aria-sort="ascending">
+              <i class="fas fa-hashtag"></i> ID
+            </th>
+            <th class="sorting text-center" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="1" style="width: 0px; display: none;" aria-label="Nombre: Activar para ordenar la columna de manera ascendente">
+              <i class="fas fa-user"></i> Nombre
+            </th>
+            <th class="all sorting text-center" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="2" aria-label="Usuario: Activar para ordenar la columna de manera ascendente">
+              <i class="fas fa-user-circle"></i> Usuario
+            </th>
+            <th class="all sorting text-center" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="3" aria-label="Oficina: Activar para ordenar la columna de manera ascendente">
+              <i class="fas fa-building"></i> Oficina
+            </th>
+            <th class="sorting text-center" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="4" style="width: 0px; display: none;" aria-label="Correo: Activar para ordenar la columna de manera ascendente">
+              <i class="fas fa-envelope"></i> Correo
+            </th>
+            <th class="sorting text-center" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="5" style="width: 0px; display: none;" aria-label="Rol: Activar para ordenar la columna de manera ascendente">
+              <i class="fas fa-user-tag"></i> Rol
+            </th>
+            <th class="sorting text-center" tabindex="0" aria-controls="data-operadores" rowspan="1" colspan="1" data-column-index="6" style="width: 0px; display: none;" aria-label="Estado: Activar para ordenar la columna de manera ascendente">
+              <i class="fas fa-check-circle"></i> Estado
+            </th>
+            <th class="all text-center sorting_disabled" data-orderable="false" rowspan="1" colspan="1" data-column-index="7" style="width: 120px;" aria-label="">
+              <i class="fas fa-cogs"></i> Acciones
+            </th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</div>
 
      </table>
 
